@@ -7,18 +7,70 @@
 </head>
 <body>
 <form id="calculator">
-    <input type="text"id="txtDisplay" value="0" disabled />
+    <input type="text"id="txtDisplay" v-model="result" value="0" />
 
-    <input type="button" id="btnDelete" value="CLR" /><input type="button" id="btnBackspace" value="BKS" /><input type="button" id="btnDivide" value="/" /><input type="button" id="btnMultiply" value="*" />
+    <input @click="clear_all()" type="button" id="btnDelete" value="CLR" /><input @click="clear_last_number()" type="button" id="btnBackspace" value="BKS" /><input @click="input_number('*')" type="button" id="btnDivide" value="/" /><input type="button" id="btnMultiply" value="*" />
+    <template v-for="row,key in numbers">
+        <template v-for="index in row">
+            <my_button @button_clicked="show_result" :number="index"></my_button>
+        </template>
+        <input v-if="key===0" type="button" id="btnSubtract" value="-" />
+    </template>
 
-    <input type="button" id="btnSeven" value="7" /><input type="button" id="btnEight" value="8" /><input type="button" id="btnNine" value="9" /><input type="button" id="btnSubtract" value="-" />
+    <input type="button" id="btnAdd" value="+" />
 
-    <input type="button" id="btnFour" value="4" /><input type="button" id="btnFive" value="5" /><input type="button" id="btnSix" value="6" /><input type="button" id="btnAdd" value="+" />
+    <input type="button" id="btnEquals" value="=" />
 
-    <input type="button" id="btnOne" value="1" /><input type="button" id="btnTwo" value="2" /><input type="button" id="btnThree" value="3" /><input type="button" id="btnEquals" value="=" />
-
-    <input type="button" id="btnZero" value="0" /><input type="button" id="btnDecimal" value="." />
+    <input @click="input_number('.')" type="button" id="btnDecimal" value="." />
     <div class="clear"></div>
 </form>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+<script>
+    Vue.component('my_button', {
+        template:
+        `
+            <input
+                @click="input_number(number)"
+                type="button"
+                :value="number" />
+        `,
+        props:["number"],
+        data: function () {
+            return {}
+        },
+        methods: {
+            input_number: function (value) {
+                this.$emit("button_clicked",value)
+            },
+        }
+    })
+
+    var app = new Vue({
+        el: '#calculator',
+        data: {
+            result:'',
+            operand1:'',
+            operand2:'',
+            numbers: [
+                [7,8,9],
+                [4,5,6],
+                [1,2,3],
+                [0]
+            ]
+        },
+        methods: {
+            show_result: function(value) {
+              this.result = this.result + '' + value;
+            },
+            clear_last_number: function () {
+                this.result = this.result.substring(0, this.result.length - 1);
+            },
+            clear_all: function () {
+                this.result = '';
+            }
+        }
+    })
+</script>
 </html>
